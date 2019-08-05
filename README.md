@@ -44,3 +44,24 @@ see `package.json` (this change is for reflect an above code.)
 // serviceWorker.unregister();
 serviceWorker.register();
 ```
+
+# How to run it?
+```shell
+npm run start
+```
+
+Open `localhost:8000` in your browser, then you can get notification.
+
+And also, You can try **Push** from your chrome browser!
+
+1. F12 to open a developers' window
+2. select `Application` and also select `ServiceWorker`
+3. check `Update on reload` to easy our emulation.
+3. please input some json like below.
+```json
+{"title": "Hello!", "msg" : "It's a good morning!", "icon": "/favicon.ico"}
+```
+
+![](./docs/notification-example.png)
+
+4. you can get another notification!
