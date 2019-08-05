@@ -1,44 +1,46 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# How to build this app?
 
-## Available Scripts
+# setup project
+```shell
+npx create-react-app push-notification --typescript
+cd create-react-app
+npm install
+npm run start # check this app's soundness
+sudo npm install -g web-push
+npm install react-app-rewired
+web-push generate-vapid-keys --json| jq . > vapid-key.json
+echo "vapid-key.json" > .gitignore
+echo -n "export const applicationServerPublicKey = " > src/publicKey.ts
+cat vapid-key.json | jq ".publicKey" >> src/publicKey.ts
+```
+ 
+# edit `src/serviceWorker.ts`
 
-In the project directory, you can run:
+- first, import `applicationServerPublicKey`
+```typescript:src/serviceWorker.ts
+import { applicationServerPublicKey } from './publicKey'
+```
+- second, implement a helper function base64 -> uint8array
 
-### `npm start`
+see. `urlB64ToUint8Array` at `src/utils.tsx`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- third, edit `registerValidSW`
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+see. `src/serviceWorker.ts`
 
-### `npm test`
+- 4th write your serviceworker
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+see. `public/sw.js`
 
-### `npm run build`
+- 5th add `src/config-overrides.js` for overwrite this react-app's configuration
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+see. `src/config-overrides.js`
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+see `package.json` (this change is for reflect an above code.)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 6th enable serviceWorker
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```typescript:src/index.tsx
+// serviceWorker.unregister();
+serviceWorker.register();
+```
